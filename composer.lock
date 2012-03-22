@@ -1,0 +1,10 @@
+{
+    "hash": "2ac6c24e2b61a9f0a5b1671ffdc3dc94",
+    "packages": [
+        {
+            "package": "symfony/http-foundation",
+            "version": "v2.0.12"
+        }
+    ],
+    "aliases": []
+}

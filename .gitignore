@@ -2,3 +2,9 @@
 .buildpath
 .project
 .settings
+# PhpStorm Configuration
+.idea/
+# Vendor directory
+vendor
+# Composer binary
+composer.phar

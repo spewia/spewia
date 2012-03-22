@@ -1,0 +1,17 @@
+{
+    "name": "spewia/spewia",
+    "description": "Spewia Framework",
+    "require": {
+        "symfony/http-foundation": "v2.0.12"
+    },
+    "authors": [
+        {
+            "name": "Roger Llopart Pla",
+            "email": "lumbendil@gmail.com"
+        },
+        {
+            "name": "Aitor Suso",
+            "email": "patxi1980@gmail.com"
+        }
+    ]
+}
