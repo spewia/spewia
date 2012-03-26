@@ -11,8 +11,11 @@ interface ContainerInterface
      *
      * @param string $identifier
      *
-     * @return mixed
-     * @throws Spewia\DependencyInjection\Exception\ServiceNotFoundException
+     * @return mixed The service identified by $identifier.
+     *
+     * @throws \Spewia\DependencyInjection\Exception\ServiceNotFoundException When the service hasn't been defined.
+     * @throws \Spewia\DependencyInjection\Exception\CircularDependencyException When the service depends on services
+     * wich depend in the service itself.
      */
     public function get($identifier);
 }

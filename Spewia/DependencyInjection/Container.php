@@ -17,17 +17,22 @@ class Container implements ContainerInterface
     {
         $this->configuration = $configuration;
     }
+
     /**
-     * Returns an object for a given identifier.
+     * * Returns an object for a given identifier.
+     *
+     * @todo: Add the ability to inject parameters using setter methods.
      *
      * @param string $identifier
      *
-     * @return mixed
-     * @throws Spewia\DependencyInjection\Exception\ServiceNotFoundException
+     * @return mixed The service identified by $identifier.
+     *
+     * @throws \Spewia\DependencyInjection\Exception\ServiceNotFoundException When the service hasn't been defined.
+     * @throws \Spewia\DependencyInjection\Exception\CircularDependencyException When the service depends on services
+     * wich depend in the service itself.
      */
     public function get($identifier)
     {
-        // TODO: Implement get() method.
         if(!$this->instances[$identifier])
         {
             $this->instances[$identifier] =
