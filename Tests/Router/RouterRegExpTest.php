@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Spewia\Router;
+namespace Tests\Spewia\RouterRegExp;
 
-use Spewia\Router\Router;
+use Spewia\Router\RouterRegExp;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class RouterTest extends \PHPUnit_Framework_TestCase
+class RouterRegExpTest extends \PHPUnit_Framework_TestCase
 {
     protected $router;
 
@@ -15,18 +15,16 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         //Create the routing configuration array
         $routing_configuration = array(
                     'test' => array(
-                        'pattern'				=> '/test/test',
+                        'pattern'				=> '/test{_<page:\d+>}',
                         'controller'    => 'test',
                         'action'				=> 'test',
-                    ),
-        						'test_page' => array(
-                        'pattern'				=> '/test/test/{page}',
-                        'controller'    => 'test',
-                        'action'				=> 'test',
+                        'defaults'			=> array(
+                            'page' => 1,
+                        )
                     ),
         );
 
-        $this->router = new Router($routing_configuration);
+        $this->router = new RouterRegExp($routing_configuration);
     }
 
     /**
@@ -39,7 +37,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getUri')
         ->once()
-        ->andReturn('/test/test');
+        ->andReturn('/test');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -76,7 +74,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getUri')
         ->once()
-        ->andReturn('/test2/test2');
+        ->andReturn('/test2');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -92,7 +90,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getUri')
         ->once()
-        ->andReturn('/test/test/2');
+        ->andReturn('/test_2');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -131,7 +129,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            '/test/test', $uri,
+            '/test', $uri,
             'The uri returned is not the expected one.'
         );
     }
@@ -141,7 +139,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildUriWithParameters()
     {
-        $identifier = 'test_page';
+        $identifier = 'test';
         $params = array('page' => 2);
 
         $uri = $this->router->buildUri($identifier, $params);
@@ -152,7 +150,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            '/test/test/2', $uri,
+            '/test_2', $uri,
             'The uri returned is not the expected one.'
         );
     }

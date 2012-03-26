@@ -7,6 +7,10 @@ use Spewia\Router\Exception\RouteNotFoundException;
 
 class Router implements RouterInterface
 {
+    /**
+     * Configuration file with all the routing values.
+     * @var array
+     */
     protected $routing_configuration;
 
     /**
@@ -20,7 +24,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * Gets a Request and check if there is a configuration defined for it
+     * (non-PHPdoc)
      * @see Spewia\Router.RouterInterface::parseRequest()
      */
     public function parseRequest(Request $request)
@@ -34,6 +38,10 @@ class Router implements RouterInterface
         return $this->routing_configuration[$identifier];
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see Spewia\Router.RouterInterface::buildUri()
+     */
     public function buildUri($identifier, array $params = array())
     {
         if (array_key_exists($identifier, $this->routing_configuration)) {
@@ -44,7 +52,6 @@ class Router implements RouterInterface
                     $uri = str_replace('{'.$key.'}', $value, $uri);
                 }
             }
-
             return $uri;
         }
         return NULL;
