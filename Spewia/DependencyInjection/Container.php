@@ -13,12 +13,26 @@ use Spewia\DependencyInjection\Exception\CircularDependencyException;
  */
 class Container implements ContainerInterface
 {
+    /**
+     * @var array
+     */
     protected $configuration;
+
+    /**
+     * @var array
+     */
     protected $instances;
+
+    /**
+     * @var array
+     */
+    protected $loading;
 
     public function __construct(array $configuration)
     {
         $this->configuration = $configuration;
+
+        $this->loading = array();
     }
 
     /**
@@ -41,8 +55,16 @@ class Container implements ContainerInterface
                 throw new ServiceNotFoundException;
             }
 
+            if(array_search($identifier, $this->loading)) {
+                throw new CircularDependencyException;
+            }
+
+            array_push($this->loading, $identifier);
+
             $this->instances[$identifier] =
                 $this->instantiateClass($this->configuration[$identifier]);
+
+            array_pop($this->loading);
         }
 
         return $this->instances[$identifier];
