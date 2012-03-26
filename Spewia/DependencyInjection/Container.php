@@ -109,15 +109,18 @@ class Container implements ContainerInterface
         }
         $this->method_calls_running = true;
 
-        foreach($this->method_calls as $service => $method_calls) {
-            foreach($method_calls as $method => $parameters) {
+        while(!empty($this->method_calls)) {
+            $service = array_rand($this->method_calls);
+
+            foreach($this->method_calls[$service] as $method => $parameters) {
                 $parameters = $this->parseParameters($parameters);
 
                 call_user_func_array(array($this->get($service), $method), $parameters);
             }
+
+            unset($this->method_calls[$service]);
         }
 
-        $this->method_calls = array();
         $this->method_calls_running = false;
     }
 
