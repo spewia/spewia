@@ -59,6 +59,24 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                         'value' => 'string'
                     )
                 )
+            ),
+            'foobar2' => array(
+                'class' => '\Tests\Spewia\DependencyInjection\FooBar',
+                'constructor_parameters' => array(
+                    array(
+                        'type'  => 'service',
+                        'id'    => 'bar'
+                    )
+                ),
+                'configuration_calls' => array(
+                    'method'        => 'setFoo',
+                    'parameters'    => array(
+                        array(
+                            'type'  => 'service',
+                            'id'    => 'foobar2'
+                        )
+                    )
+                )
             )
         ));
     }
@@ -112,11 +130,18 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->get('unexisting_service');
     }
+
+    public function testGetWithSetterDependencies()
+    {
+        $return = $this->object->get('foobar2');
+
+        $this->assertSame($return, $return->getFoo(),
+            'The two objects must be the same.');
+    }
 }
 
 class Foo
-{
-}
+{}
 
 class Bar
 {
@@ -142,6 +167,9 @@ class Bar
 
 class FooBar extends Foo
 {
+    protected $bar;
+    protected $foo;
+
     public function __construct(Bar $bar)
     {
         $this->bar = $bar;
@@ -149,6 +177,11 @@ class FooBar extends Foo
 
     public function setFoo(Foo $foo)
     {
+        $this->foo = $foo;
+    }
 
+    public function getFoo()
+    {
+        return $this->foo;
     }
 }
