@@ -4,12 +4,11 @@ namespace Spewia\DependencyInjection;
 
 use Spewia\DependencyInjection\Exception\ServiceNotFoundException;
 use Spewia\DependencyInjection\Exception\CircularDependencyException;
+
 /**
- * Created by JetBrains PhpStorm.
- * User: rllopart
- * Date: 23/03/12
- * Time: 10:04
- * To change this template use File | Settings | File Templates.
+ * Container class to be able to use dependency injection.
+ *
+ * @author Roger Llopart Pla <lumbendil@gmail.com>
  */
 class Container implements ContainerInterface
 {
@@ -21,30 +20,55 @@ class Container implements ContainerInterface
     /**
      * @var array
      */
-    protected $instances;
+    protected $instances = array();
 
     /**
      * @var array
      */
-    protected $loading;
+    protected $loading = array();
 
     /**
      * @var array
      */
-    protected $method_calls;
+    protected $method_calls = array();
 
-    protected $method_calls_running;
+    /**
+     * @var bool
+     */
+    protected $method_calls_running = false;
 
+    /**
+     * Builds a container object.
+     *
+     * @param array $configuration array which contains all the configuration. It has the following format:
+     *  array(
+     *      'IDENTIFIER' => 'FULL_CLASS_NAME',
+     *      'constructor_parameters'    => {parameters_array}
+     *      'configuration_calls'       => array(
+     *          'METHOD'    => {parameters_array},
+     *          ...
+     *      ),
+     *      ...
+     * )
+     *
+     * where {parameters_array} is an array wich can contain references to services or constant values. The format to
+     * each of them is the following:
+     *
+     * * Service:
+     *   array(
+     *      'type'  => 'service',
+     *      'id'    => 'SERVICE_ID'
+     *   )
+     *
+     * * Constant value:
+     *   array(
+     *      'type'  => 'constant',
+     *      'value' => CONSTANT_VALUE
+     *   )
+     */
     public function __construct(array $configuration)
     {
         $this->configuration = $configuration;
-
-        $this->loading = array();
-        $this->instances = array();
-
-        $this->method_calls = array();
-
-        $this->method_calls_running = false;
     }
 
     /**
@@ -88,6 +112,12 @@ class Container implements ContainerInterface
         return $this->instances[$identifier];
     }
 
+    /**
+     * Instantiates the class as defined by the given configuration.
+     *
+     * @param $configuration An element of the configuration
+     * @return mixed
+     */
     protected function instantiateClass($configuration)
     {
         if(method_exists($configuration['class'], '__construct') &&
@@ -102,6 +132,9 @@ class Container implements ContainerInterface
         return new $configuration['class'];
     }
 
+    /**
+     * Calls all the instantiated services method dependencies.
+     */
     protected function callServiceMethodDependencies()
     {
         if($this->method_calls_running) {
@@ -124,6 +157,12 @@ class Container implements ContainerInterface
         $this->method_calls_running = false;
     }
 
+    /**
+     * Parses the input array, returning an array wich can be used with call_user_func_array().
+     *
+     * @param array $input_parameters
+     * @return array
+     */
     protected function parseParameters(array $input_parameters)
     {
         $output_parameters = array();
