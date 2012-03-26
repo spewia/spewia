@@ -10,6 +10,9 @@ use Spewia\DependencyInjection\Container;
  */
 class ContainerTest extends \PHPUnit_Framework_TestCase
 {
+    const   FOO_CLASS       = '\Tests\Spewia\DependencyInjection\Foo',
+            BAR_CLASS       = '\Tests\Spewia\DependencyInjection\Bar',
+            FOOBAR_CLASS    = '\Tests\Spewia\DependencyInjection\FooBar';
     /**
      * @var Container
      */
@@ -23,10 +26,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = new Container(array(
             'foo' => array(
-                'class' => '\Tests\Spewia\DependencyInjection\Foo'
+                'class' => self::FOO_CLASS
             ),
             'bar' => array(
-                'class' => '\Tests\Spewia\DependencyInjection\Bar',
+                'class' => self::BAR_CLASS,
                 'constructor_parameters' => array(
                     array(
                         'type'  => 'service',
@@ -39,7 +42,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'foobar' => array(
-                'class' => '\Tests\Spewia\DependencyInjection\FooBar',
+                'class' => self::FOOBAR_CLASS,
                 'constructor_parameters' => array(
                     array(
                         'type'  => 'service',
@@ -48,7 +51,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'bar2' => array(
-                'class' => '\Tests\Spewia\DependencyInjection\Bar',
+                'class' => self::BAR_CLASS,
                 'constructor_parameters' => array(
                     array(
                         'type'  => 'service',
@@ -61,7 +64,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 )
             ),
             'foobar2' => array(
-                'class' => '\Tests\Spewia\DependencyInjection\FooBar',
+                'class' => self::FOOBAR_CLASS,
                 'constructor_parameters' => array(
                     array(
                         'type'  => 'service',
@@ -69,11 +72,38 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                     )
                 ),
                 'configuration_calls' => array(
-                    'method'        => 'setFoo',
-                    'parameters'    => array(
+                    'setFoo'    => array(
                         array(
                             'type'  => 'service',
                             'id'    => 'foobar2'
+                        )
+                    )
+                )
+            ),
+            'foobar3' => array(
+                'class' => self::FOOBAR_CLASS,
+                'constructor_parameters' => array(
+                    array(
+                        'type'  => 'service',
+                        'id'    => 'bar'
+                    )
+                ),
+                'configuration_calls' => array(
+                    'setFoo' => array(
+                        array(
+                            'type'  => 'service',
+                            'id'    => 'foo2'
+                        )
+                    )
+                )
+            ),
+            'foo2' => array(
+                'class' => self::FOO_CLASS,
+                'configuration_calls' => array(
+                    'setFoo' => array(
+                        array(
+                            'type'  => 'service',
+                            'id'    => 'foo'
                         )
                     )
                 )
@@ -86,7 +116,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $return = $this->object->get('foo');
 
         $this->assertInstanceOf(
-            '\Tests\Spewia\DependencyInjection\Foo', $return,
+            self::FOO_CLASS, $return,
             'The key "foo" expected an instance of type "Foo".');
     }
 
@@ -103,7 +133,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $return = $this->object->get('bar');
 
-        $this->assertInstanceOf('\Tests\Spewia\DependencyInjection\Bar', $return,
+        $this->assertInstanceOf(self::BAR_CLASS, $return,
             'The key "bar" expected an instance of type "Bar".');
 
         $foo = $this->object->get('foo');
@@ -138,10 +168,35 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($return, $return->getFoo(),
             'The two objects must be the same.');
     }
+
+    public function testGetWithSetterDependenciesWichHaveSetterDependencies()
+    {
+        $return = $this->object->get('foobar3');
+
+        $inner_dependecy = $return->getFoo()->getFoo();
+
+        $this->assertInstanceOf(self::FOO_CLASS, $inner_dependecy,
+            'The Foo object should contain a foo object itself.');
+
+        $this->assertSame($this->object->get('foo'), $inner_dependecy,
+            ' The inner dependency should be the same than the object fetched from calling $container->get("foo").');
+    }
 }
 
 class Foo
-{}
+{
+    protected $foo;
+
+    public function setFoo(Foo $foo)
+    {
+        $this->foo = $foo;
+    }
+
+    public function getFoo()
+    {
+        return $this->foo;
+    }
+}
 
 class Bar
 {

@@ -28,17 +28,27 @@ class Container implements ContainerInterface
      */
     protected $loading;
 
+    /**
+     * @var array
+     */
+    protected $method_calls;
+
+    protected $method_calls_running;
+
     public function __construct(array $configuration)
     {
         $this->configuration = $configuration;
 
         $this->loading = array();
+        $this->instances = array();
+
+        $this->method_calls = array();
+
+        $this->method_calls_running = false;
     }
 
     /**
      * * Returns an object for a given identifier.
-     *
-     * @todo: Add the ability to inject parameters using setter methods.
      *
      * @param string $identifier
      *
@@ -50,7 +60,7 @@ class Container implements ContainerInterface
      */
     public function get($identifier)
     {
-        if(!$this->instances[$identifier]) {
+        if(!array_key_exists($identifier, $this->instances)) {
             if(!array_key_exists($identifier, $this->configuration)) {
                 throw new ServiceNotFoundException;
             }
@@ -61,10 +71,18 @@ class Container implements ContainerInterface
 
             array_push($this->loading, $identifier);
 
+            if(array_key_exists('configuration_calls', $this->configuration[$identifier])) {
+                $this->method_calls[$identifier] = $this->configuration[$identifier]['configuration_calls'];
+            }
+
             $this->instances[$identifier] =
                 $this->instantiateClass($this->configuration[$identifier]);
 
             array_pop($this->loading);
+
+            if(empty($this->loading)) {
+                $this->callServiceMethodDependencies();
+            }
         }
 
         return $this->instances[$identifier];
@@ -74,21 +92,50 @@ class Container implements ContainerInterface
     {
         if(method_exists($configuration['class'], '__construct') &&
             array_key_exists('constructor_parameters', $configuration)) {
-            $params = array();
 
-            foreach($configuration['constructor_parameters'] as $constructor_paramenter) {
-                switch($constructor_paramenter['type']) {
-                    case 'service':
-                        $params[] = $this->get($constructor_paramenter['id']);
-                        break;
-                    case 'constant':
-                        $params[] = $constructor_paramenter['value'];
-                        break;
-                }
-            }
+            $params = $this->parseParameters($configuration['constructor_parameters']);
+
             $reflection = new \ReflectionClass($configuration['class']);
+
             return $reflection->newInstanceArgs($params);
         }
         return new $configuration['class'];
+    }
+
+    protected function callServiceMethodDependencies()
+    {
+        if($this->method_calls_running) {
+            return;
+        }
+        $this->method_calls_running = true;
+
+        foreach($this->method_calls as $service => $method_calls) {
+            foreach($method_calls as $method => $parameters) {
+                $parameters = $this->parseParameters($parameters);
+
+                call_user_func_array(array($this->get($service), $method), $parameters);
+            }
+        }
+
+        $this->method_calls = array();
+        $this->method_calls_running = false;
+    }
+
+    protected function parseParameters(array $input_parameters)
+    {
+        $output_parameters = array();
+
+        foreach($input_parameters as $parameter) {
+            switch($parameter['type']) {
+                case 'service':
+                    $output_parameters[] = $this->get($parameter['id']);
+                    break;
+                case 'constant':
+                    $output_parameters[] = $parameter['value'];
+                    break;
+            }
+        }
+
+        return $output_parameters;
     }
 }
