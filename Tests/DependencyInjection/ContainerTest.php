@@ -108,7 +108,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Spewia\DependencyInjection\Exception\ServiceNotFoundException
      */
-    public function testNonExistingService()
+    public function testGetNonExistingService()
     {
         $this->object->get('unexisting_service');
     }

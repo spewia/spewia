@@ -1,6 +1,9 @@
 <?php
 
 namespace Spewia\DependencyInjection;
+
+use Spewia\DependencyInjection\Exception\ServiceNotFoundException;
+use Spewia\DependencyInjection\Exception\CircularDependencyException;
 /**
  * Created by JetBrains PhpStorm.
  * User: rllopart
@@ -33,8 +36,11 @@ class Container implements ContainerInterface
      */
     public function get($identifier)
     {
-        if(!$this->instances[$identifier])
-        {
+        if(!$this->instances[$identifier]) {
+            if(!array_key_exists($identifier, $this->configuration)) {
+                throw new ServiceNotFoundException;
+            }
+
             $this->instances[$identifier] =
                 $this->instantiateClass($this->configuration[$identifier]);
         }
