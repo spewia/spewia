@@ -1,10 +1,9 @@
 {
-    "hash": "b55312e1a1f5218f8ab70334aa47fe68",
+    "hash": "4317a6d4c1e508f6fe81bae818a70527",
     "packages": [
         {
             "package": "mockery/mockery",
-            "version": "dev-master",
-            "source-reference": "2c5e3244b72d268d8c70935fcceb39b3d84d57db"
+            "version": "0.7.2"
         },
         {
             "package": "symfony/http-foundation",

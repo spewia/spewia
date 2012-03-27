@@ -3,10 +3,12 @@
     "description": "Spewia Framework",
     "require": {
         "symfony/http-foundation": "v2.0.12",
-        "mockery/mockery": ">=0.7.2"
+        "mockery/mockery": "0.7.2"
     },
     "autoload": {
-        "psr-0": {"Spewia": "."}
+        "psr-0": {
+            "Spewia": "."
+        }
     },
     "authors": [
         {

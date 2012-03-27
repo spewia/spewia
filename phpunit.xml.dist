@@ -11,7 +11,7 @@
     processIsolation            = "true"
     stopOnFailure               = "false"
     syntaxCheck                 = "false"
-    bootstrap                   = "vendor/.composer/autoload.php" >
+    bootstrap                   = "Tests/bootstrap.php" >
 
     <testsuites>
         <testsuite name="Project Test Suite">
@@ -21,7 +21,7 @@
 
     <filter>
         <whitelist>
-            <directory>Spewia</directory>
+            <directory>Tests</directory>
         </whitelist>
     </filter>
     
