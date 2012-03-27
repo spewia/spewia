@@ -31,8 +31,8 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
                     ),
                     'list' => array(
         								'pattern'				=> array(
-                            'en_US'     => '/list{_<page:\d+>',
-                            'es_ES'			=> '/listado_{<page:\d+>',
+                            'en_US'     => '/list{_<page:\d+>}',
+                            'es_ES'			=> '/listado{_<page:\d+>}',
                         ),
                         'controller'    => 'list',
                         'action'				=> 'default',
@@ -68,7 +68,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -106,6 +106,11 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         ->once()
         ->andReturn('/page');
 
+        $request
+        ->shouldReceive('getLocale')
+        ->once()
+        ->andReturn('NULL');
+
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
@@ -131,7 +136,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     /**
      * Send a Uri that is correct in one language, but the session is set in another one.
      *
-     * @expectedException Spewia\Router\Exception\RouteI18nIncorrectLanguageException
+     * @expectedException Spewia\Router\Exception\RouteNotFoundException
      */
     public function testControllerActionRoutingI18nWithWrongLanguage()
     {
@@ -146,7 +151,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
     }
@@ -167,7 +172,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -209,7 +214,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -231,7 +236,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -284,7 +289,7 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request
         ->shouldReceive('getLocale')
         ->once()
-        ->andReturn('/es_ES');
+        ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -327,8 +332,9 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     public function testBuildUriWithNoParameters()
     {
         $identifier = 'page';
+        $language = 'es_ES';
 
-        $uri = $this->router->buildUri($identifier);
+        $uri = $this->router->buildUri($identifier, array(), $language);
 
         $this->assertNotNull(
         $uri,
@@ -348,8 +354,9 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     {
         $identifier = 'list';
         $params = array('page' => 2);
+        $language = 'es_ES';
 
-        $uri = $this->router->buildUri($identifier, $params);
+        $uri = $this->router->buildUri($identifier, $params, $language);
 
         $this->assertNotNull(
         $uri,
