@@ -142,7 +142,7 @@ class Container implements ContainerInterface
     /**
      * Instantiates the class as defined by the given configuration.
      *
-     * @param $configuration An element of the configuration
+     * @param array $configuration An element of the configuration
      * @return mixed
      */
     protected function instantiateClass($configuration)
