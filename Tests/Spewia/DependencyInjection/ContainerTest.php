@@ -213,7 +213,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             ' The inner dependency should be the same than the object fetched from calling $container->get("foo").');
     }
 
-    public function testGetFromClassWithFactory()
+    public function testGetFromClassWithStaticFactory()
     {
         $foo = $this->object->get('factory_foo');
 
@@ -222,7 +222,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->object->get('foo'), $foo->getFoo(),
             'The Foo object from the factory should have been injected the "foo" element.');
+    }
 
+    public function testGetFromClassWithInstantiatedFactory()
+    {
         $bar = $this->object->get('factory_bar');
 
         $this->assertInstanceOf(self::BAR_CLASS, $bar,
