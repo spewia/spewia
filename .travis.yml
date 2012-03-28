@@ -9,5 +9,8 @@ branches:
     - master
 
 before_script:
+    - pyrus channel-discover pear.php-tools.net
+    - pyrus install pat/vfsStream-beta
+    - phpenv rehash
     - wget http://getcomposer.org/composer.phar
     - php composer.phar install
