@@ -39,6 +39,7 @@ class TwigTemplate implements TemplateInterface
     }
     /**
      * Assigns the given parameter to its key.
+     *
      * @param string $key
      * @param mixed $value
      */
@@ -49,6 +50,7 @@ class TwigTemplate implements TemplateInterface
 
     /**
      * Sets the template file to render.
+     *
      * @param string $file
      */
     public function setTemplateFile($file)
@@ -66,6 +68,11 @@ class TwigTemplate implements TemplateInterface
         return $this->template->render($this->parameters);
     }
 
+    /**
+     * Adds a folder to the loader.
+     *
+     * @param $folder
+     */
     public function addFolder($folder)
     {
         $this->loader->addPath($folder);
