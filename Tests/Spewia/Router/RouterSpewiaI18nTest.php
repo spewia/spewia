@@ -62,12 +62,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/pagina');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
@@ -103,12 +101,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/page');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('NULL');
 
         $routerParams = $this->router->parseRequest($request);
@@ -145,12 +141,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/page');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
@@ -166,12 +160,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/about');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
@@ -208,12 +200,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/pagina2');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
@@ -230,12 +220,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/listado_2');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
@@ -283,12 +271,10 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
 
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/listado');
 
         $request
         ->shouldReceive('getLocale')
-        ->once()
         ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
