@@ -41,7 +41,6 @@ class RouterSpewiaTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/page');
 
         $routerParams = $this->router->parseRequest($request);
@@ -78,7 +77,6 @@ class RouterSpewiaTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/page2');
 
         $routerParams = $this->router->parseRequest($request);
@@ -94,7 +92,6 @@ class RouterSpewiaTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/list_2');
 
         $routerParams = $this->router->parseRequest($request);
@@ -138,7 +135,6 @@ class RouterSpewiaTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
         ->shouldReceive('getUri')
-        ->once()
         ->andReturn('/list');
 
         $routerParams = $this->router->parseRequest($request);
