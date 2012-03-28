@@ -129,11 +129,15 @@ class Container implements ContainerInterface
             }
 
             if(array_key_exists('class', $configuration['factory'])) {
-                // The class is static.
-                $callback = array($configuration['factory']['class'], $configuration['factory']['method']);
+                $called_object = $configuration['factory']['class'];
+            } else {
+                $called_object = $this->get($configuration['factory']['service']);
             }
 
-            return call_user_func_array($callback, $params);
+            return call_user_func_array(
+                array($called_object, $configuration['factory']['method']),
+                $params
+            );
         }
 
         if(method_exists($configuration['class'], '__construct') &&
