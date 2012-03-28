@@ -12,7 +12,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     const   FOO_CLASS       = '\Tests\Spewia\DependencyInjection\Foo',
             BAR_CLASS       = '\Tests\Spewia\DependencyInjection\Bar',
-            FOOBAR_CLASS    = '\Tests\Spewia\DependencyInjection\FooBar';
+            FOOBAR_CLASS    = '\Tests\Spewia\DependencyInjection\FooBar',
+            FACTORY_CLASS   = '\Tests\Spewia\DependencyInjection\Factory';
     /**
      * @var Container
      */
@@ -107,6 +108,35 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                         )
                     )
                 )
+            ),
+            'factory_foo' => array(
+                'class' => self::FOO_CLASS,
+                'factory' => array(
+                    'class'     => self::FACTORY_CLASS,
+                    'method'    => 'buildStatic',
+                    'params'    => array(
+                        array(
+                            'type'  => 'service',
+                            'id'    => 'foo'
+                        )
+                    )
+                )
+            ),
+            'factory_service' => array(
+                'class' => self::FACTORY_CLASS
+            ),
+            'factory_bar' => array(
+                'class' => self::BAR_CLASS,
+                'factory' => array(
+                    'service'   => 'factory_service',
+                    'method'    => 'buildDynamic',
+                    'params'    => array(
+                        array(
+                            'type'  => 'service',
+                            'id'    => 'foo'
+                        )
+                    )
+                )
             )
         ));
     }
@@ -146,6 +176,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @runInSeparateProcess
      * @expectedException \Spewia\DependencyInjection\Exception\CircularDependencyException
      */
     public function testGetWithCircularDependency()
@@ -180,6 +211,56 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->object->get('foo'), $inner_dependecy,
             ' The inner dependency should be the same than the object fetched from calling $container->get("foo").');
+    }
+
+    public function testGetFromClassWithFactory()
+    {
+        $foo = $this->object->get('factory_foo');
+
+        $this->assertInstanceOf(self::FOO_CLASS, $foo,
+            'The foo obtained from the factory should be of class Foo.');
+
+        $this->assertSame($this->object->get('foo'), $foo->getFoo(),
+            'The Foo object from the factory should have been injected the "foo" element.');
+
+        $bar = $this->object->get('factory_bar');
+
+        $this->assertInstanceOf(self::BAR_CLASS, $bar,
+            'The object obtained from the factory should be of class Bar.');
+
+        $this->assertSame($this->object->get('foo'), $bar->getFoo(),
+            'The Bar object from the factory should have been injected the "foo" element.');
+
+        $this->assertSame('FROM_FACTORY', $bar->getString(),
+            'The bar object should contain the string wich is defined in the Factory constructor.');
+    }
+}
+
+class Factory
+{
+    protected $factory_string = null;
+
+    public function __construct()
+    {
+        $this->factory_string = 'FROM_FACTORY';
+    }
+
+    public static function buildStatic(Foo $foo = null)
+    {
+        $object = new Foo();
+
+
+
+        if($foo) {
+            $object->setFoo($foo);
+        }
+
+        return $object;
+    }
+
+    public function buildDynamic(Foo $foo)
+    {
+        return new Bar($foo, $this->factory_string);
     }
 }
 
