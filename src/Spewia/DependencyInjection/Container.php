@@ -14,26 +14,36 @@ use Spewia\DependencyInjection\Exception\CircularDependencyException;
 class Container implements ContainerInterface
 {
     /**
+     * The configuration given.
+     *
      * @var array
      */
     protected $configuration;
 
     /**
+     * Instances of the objects wich have already been served.
+     *
      * @var array
      */
     protected $instances = array();
 
     /**
+     * Array of classes wich are being loaded.
+     *
      * @var array
      */
     protected $loading = array();
 
     /**
+     * Array of classes wich have pending method calls.
+     *
      * @var array
      */
     protected $method_calls = array();
 
     /**
+     * Flag to mark if the container is processing the method calls of the given class.
+     *
      * @var bool
      */
     protected $method_calls_running = false;
@@ -51,6 +61,22 @@ class Container implements ContainerInterface
      *      ),
      *      ...
      * )
+     *
+     * 'constructor_parameters' and 'configuration_calls' are optional.
+     *
+     * Instead of 'constructor_parameters', a "factory" key can be defined, wich will call a factory instead of using
+     * the "new" keyword. The factory key has the following structure.
+     *
+     * array(
+     *      'class'     => 'FACTORY_CLASS',
+     *      'service'   => 'FACTORY_SERVICE',
+     *      'method'    => 'FACTORY_METHOD',
+     *      'params'    => {parameters_array}
+     * )
+     *
+     * Where you can only use either a 'class' or a 'service' key and the 'params' key is optional. If you use the
+     * 'class' key, it should be the full class name of a class and it'll do a static call to method, and if you use
+     * 'service' it'll call the given 'method' of the given service id.
      *
      * where {parameters_array} is an array wich can contain references to services or constant values. The format to
      * each of them is the following:
