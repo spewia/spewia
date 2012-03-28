@@ -1,5 +1,5 @@
 {
-    "hash": "38d52e36875bbfc46a4e7089961cbe75",
+    "hash": "9ef78b0b68f3c8a486fb130d22222d51",
     "packages": [
         {
             "package": "mockery/mockery",
@@ -8,7 +8,13 @@
         {
             "package": "symfony/http-foundation",
             "version": "v2.0.12"
+        },
+        {
+            "package": "twig/twig",
+            "version": "1.6.3"
         }
     ],
-    "aliases": []
+    "aliases": [
+
+    ]
 }
