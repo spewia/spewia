@@ -9,6 +9,7 @@ use Spewia\DependencyInjection\Exception\CircularDependencyException;
  * Container class to be able to use dependency injection.
  *
  * @author Roger Llopart Pla <lumbendil@gmail.com>
+ * @todo: Update the documentation with information of the support of factory calls.
  */
 class Container implements ContainerInterface
 {
@@ -120,6 +121,21 @@ class Container implements ContainerInterface
      */
     protected function instantiateClass($configuration)
     {
+        if(array_key_exists('factory', $configuration)) {
+            $params = array();
+
+            if(array_key_exists('params', $configuration['factory'])) {
+                $params = $this->parseParameters($configuration['factory']['params']);
+            }
+
+            if(array_key_exists('class', $configuration['factory'])) {
+                // The class is static.
+                $callback = array($configuration['factory']['class'], $configuration['factory']['method']);
+            }
+
+            return call_user_func_array($callback, $params);
+        }
+
         if(method_exists($configuration['class'], '__construct') &&
             array_key_exists('constructor_parameters', $configuration)) {
 
