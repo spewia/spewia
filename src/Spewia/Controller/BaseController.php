@@ -2,19 +2,41 @@
 
 namespace Spewia\Controller;
 
+use Spewia\DependencyInjection\ContainerInterface;
+use Spewia\Template\TemplateInterface;
+use Symfony\Component\HttpFoundation\Response;
+
 class BaseController implements ControllerInterface
 {
+    protected $container;
+
     /**
-     * Array containing all the needed information to construct the Response to send to the server.
-     * @var array
+     * @var \Symfony\Component\HttpFoundation\Response
      */
     protected $response;
 
     /**
-     * Array containing all the needed data to construct the View that will be shown to the user.
-     * @var array
+     * @var \Spewia\Template\TemplateInterface
      */
     protected $template;
+
+    public final function __construct(ContainerInterface $container)
+    {
+
+        $this->container = $container;
+
+        $this->response = new Response();
+
+        $this->initialize();
+    }
+
+    /**
+     * Function to allow all the controllers to customize what to do when the __construct is finished.
+     */
+    public function initialize()
+    {
+
+    }
 
     /**
      * (non-PHPdoc)
