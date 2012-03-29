@@ -34,4 +34,14 @@ class Dispatcher implements DispatcherInterface
     {
         // TODO: Implement configure() method.
     }
+
+    /**
+     * Creates the Dependency Injection Container and returns it.
+     *
+     * @return \Spewia\DependencyInjection\Container
+     */
+    protected function createDependencyInjectionContainer()
+    {
+        // TODO: Implement createDependencyInjectionContainer() method.
+    }
 }

@@ -62,9 +62,11 @@ DIC_CONFIGURATION;
 
         $file->setContent($configuration);
 
-        $this->object->configure(vfsStream::url($this->folder));
+        $this->container->shouldReceive('addServiceConfigurations')
+            ->once()
+            ->with(include vfsStream::url('root/dic_configuration.php'));
 
-        // TODO: Verify that the dependency injector got the new configuration.
+        $this->object->configure(vfsStream::url('root'));
     }
 
     public function testConfigureMissingFile()
