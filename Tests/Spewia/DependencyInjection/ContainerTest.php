@@ -143,7 +143,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSelf()
     {
-        $return = $this->object->get('self');
+        $return = $this->object->get('container');
 
         $this->assertInstanceOf('\Spewia\DependencyInjection\Container', $return,
             'The return should be of class "Container".');
