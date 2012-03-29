@@ -65,9 +65,12 @@ DIC_CONFIGURATION;
         $this->object->configure(vfsStream::url('root'));
     }
 
+    /**
+     * @expectedException \Spewia\Dispatcher\Exception\FileNotFoundException
+     */
     public function testConfigureMissingFile()
     {
-        $this->markTestIncomplete();
+        $this->object->configure(vfsStream::url('root'));
     }
 
     public function testRun()
