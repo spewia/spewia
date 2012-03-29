@@ -93,7 +93,7 @@ class Container implements ContainerInterface
      *      'value' => CONSTANT_VALUE
      *   )
      */
-    public function __construct(array $configuration)
+    public function __construct(array $configuration = array())
     {
         $this->configuration = $configuration;
     }
@@ -138,6 +138,14 @@ class Container implements ContainerInterface
 
         return $this->instances[$identifier];
     }
+
+    /**
+     * Adds the given array of service configurations to the one given to the constructor.
+     *
+     * @param array $service_configurations
+     */
+    public function addServiceConfigurations(array $service_configurations)
+    {}
 
     /**
      * Instantiates the class as defined by the given configuration.
