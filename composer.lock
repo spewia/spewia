@@ -1,6 +1,10 @@
 {
-    "hash": "9ef78b0b68f3c8a486fb130d22222d51",
+    "hash": "57a45a03df0491f35b6da48583465fc2",
     "packages": [
+        {
+            "package": "mikey179/vfsStream",
+            "version": "1.0.0-beta3"
+        },
         {
             "package": "mockery/mockery",
             "version": "0.7.2"
@@ -14,7 +18,5 @@
             "version": "1.6.3"
         }
     ],
-    "aliases": [
-
-    ]
+    "aliases": []
 }

@@ -4,6 +4,7 @@
     "require": {
         "symfony/http-foundation": "v2.0.12",
         "mockery/mockery": "0.7.2",
+        "mikey179/vfsStream" : "v1.0.0-beta3",
         "twig/twig": "v1.6.3"
     },
     "autoload": {

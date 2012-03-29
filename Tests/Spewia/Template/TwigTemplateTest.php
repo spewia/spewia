@@ -3,6 +3,7 @@
 namespace Tests\Spewia\Template;
 
 use Spewia\Template\TwigTemplate;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,18 +20,14 @@ class TwigTemplateTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Setup dummy filesystem.
-        \vfsStreamWrapper::register();
-        $root = \vfsStream::newDirectory('root');
-        \vfsStreamWrapper::setRoot($root);
+        $this->base_folder = vfsStream::setup('root');
 
-        $this->base_folder = $root;
-
-        $this->file = \vfsStream::newFile('dummy.tpl');
+        $this->file = vfsStream::newFile('dummy.tpl');
         $this->base_folder->addChild($this->file);
 
         // SetUp the SUT.
         $this->object = new TwigTemplate();
-        $this->object->addFolder(\vfsStream::url('root'));
+        $this->object->addFolder(vfsStream::url('root'));
     }
 
     public function testRenderWithoutProperties()
