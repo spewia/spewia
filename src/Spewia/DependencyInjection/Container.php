@@ -111,6 +111,10 @@ class Container implements ContainerInterface
      */
     public function get($identifier)
     {
+        if($identifier == 'container') {
+            return $this;
+        }
+
         if(!array_key_exists($identifier, $this->instances)) {
             if(!array_key_exists($identifier, $this->configuration)) {
                 throw new ServiceNotFoundException;
