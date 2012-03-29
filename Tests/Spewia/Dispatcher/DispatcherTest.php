@@ -2,7 +2,7 @@
 
 namespace Tests\Spewia\Dispatcher;
 
-use Spewia\Dispatcher\Dispatcher;
+use Spewia\Dispatcher\Dispatcher as BaseDispatcher;
 use org\bovigo\vfs\vfsStream;
 /**
  * Created by JetBrains PhpStorm.
@@ -25,12 +25,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object = new Dispatcher();
         $this->folder = vfsStream::setup('root');
 
-        $this->object = \Mockery::mock($this->object);
-
-        $this->container = \Mockery::mock('\Spewia\DependencyInjector\Container');
-
-        $this->object->shouldReceive('getDependencyInjectionContainer')
-            ->andReturn($this->container);
+        global $mock;
+        $this->container = $mock;
     }
 
     public function testConfigure()
@@ -70,11 +66,27 @@ DIC_CONFIGURATION;
     }
 
     public function testConfigureMissingFile()
-    {}
+    {
+        $this->markTestIncomplete();
+    }
 
     public function testRun()
-    {}
+    {
+        $this->markTestIncomplete();
+    }
 
     public function testRunControllerNotFound()
-    {}
+    {
+        $this->markTestIncomplete();
+    }
+}
+
+class Dispatcher extends BaseDispatcher
+{
+    protected function createDependencyInjectionContainer()
+    {
+        global $mock;
+        $mock = \Mockery::mock('\Spewia\DependencyInjector\Container');
+        return $mock;
+    }
 }

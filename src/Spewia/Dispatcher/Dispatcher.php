@@ -1,6 +1,8 @@
 <?php
 
 namespace Spewia\Dispatcher;
+
+use Spewia\DependencyInjection\Container;
 /**
  * Implementation of the dispatcher interface, wich handles a request received by the webserver.
  *
@@ -8,9 +10,13 @@ namespace Spewia\Dispatcher;
  */
 class Dispatcher implements DispatcherInterface
 {
+    /**
+     * @var Container
+     */
+    protected $container;
     function __construct()
     {
-        // TODO: Implement __construct() method.
+        $this->container = $this->createDependencyInjectionContainer();
     }
 
     /**
@@ -33,6 +39,7 @@ class Dispatcher implements DispatcherInterface
     public function configure($configuration_dir)
     {
         // TODO: Implement configure() method.
+        $this->container->addServiceConfigurations(include $configuration_dir . '/dic_configuration.php');
     }
 
     /**
@@ -42,6 +49,7 @@ class Dispatcher implements DispatcherInterface
      */
     protected function createDependencyInjectionContainer()
     {
-        // TODO: Implement createDependencyInjectionContainer() method.
+        // TODO: Load framework base configuration.
+        return new Container();
     }
 }
