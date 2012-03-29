@@ -3,6 +3,7 @@
 namespace Spewia\Dispatcher;
 
 use Spewia\DependencyInjection\Container;
+use Spewia\Dispatcher\Exception\FileNotFoundException;
 /**
  * Implementation of the dispatcher interface, wich handles a request received by the webserver.
  *
@@ -38,8 +39,14 @@ class Dispatcher implements DispatcherInterface
      */
     public function configure($configuration_dir)
     {
-        // TODO: Implement configure() method.
-        $this->container->addServiceConfigurations(include $configuration_dir . '/dic_configuration.php');
+        $dic_configuration_file = $configuration_dir . '/dic_configuration.php';
+
+        if(!file_exists($dic_configuration_file)) {
+            throw new FileNotFoundException('The dependency injection configuration file couldn\'t be found in "'.
+                $dic_configuration_file .'".');
+        }
+
+        $this->container->addServiceConfigurations(include $dic_configuration_file);
     }
 
     /**
