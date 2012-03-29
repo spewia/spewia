@@ -93,7 +93,7 @@ class Container implements ContainerInterface
      *      'value' => CONSTANT_VALUE
      *   )
      */
-    public function __construct(array $configuration)
+    public function __construct(array $configuration = array())
     {
         $this->configuration = $configuration;
     }
@@ -137,6 +137,25 @@ class Container implements ContainerInterface
         }
 
         return $this->instances[$identifier];
+    }
+
+    /**
+     * Adds the given array of service configurations to the one given to the constructor.
+     *
+     * @param array $service_configurations
+     */
+    public function addServiceConfigurations(array $service_configurations)
+    {
+        $keys_to_remove = array_intersect(array_keys($service_configurations), array_keys($this->instances));
+
+        foreach($keys_to_remove as $key) {
+            unset($this->instances[$key]);
+        }
+
+        /* The order in this union is important. This way, the keys wich are shared in both arrays are taken from
+         * $service_configurations instead of $this->configuration.
+         */
+        $this->configuration = $service_configurations + $this->configuration;
     }
 
     /**
