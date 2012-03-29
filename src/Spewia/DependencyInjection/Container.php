@@ -9,7 +9,6 @@ use Spewia\DependencyInjection\Exception\CircularDependencyException;
  * Container class to be able to use dependency injection.
  *
  * @author Roger Llopart Pla <lumbendil@gmail.com>
- * @todo: Update the documentation with information of the support of factory calls.
  */
 class Container implements ContainerInterface
 {
