@@ -19,6 +19,9 @@ class ResponseFactoryTest extends \PHPUnit_Framework_TestCase
         $this->object = new ResponseFactory;
     }
 
+    /**
+     * Tests the standard behaviour of the factory.
+     */
     public function testBuild()
     {
         $response = $this->object->build();

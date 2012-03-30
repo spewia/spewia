@@ -4,11 +4,7 @@ namespace Tests\Spewia\Controller\Factory;
 
 use Spewia\Controller\Factory\ControllerFactory;
 /**
- * Created by JetBrains PhpStorm.
- * User: rllopart
- * Date: 30/03/12
- * Time: 11:20
- * To change this template use File | Settings | File Templates.
+ * Test of the ControllerFactory.
  */
 class ControllerFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +21,9 @@ class ControllerFactoryTest extends \PHPUnit_Framework_TestCase
         $this->object = new ControllerFactory($this->container_mock);
     }
 
+    /**
+     * Tests the standard behaviour of the factory.
+     */
     public function testBuild()
     {
         $controller = $this->object->build(array(
@@ -39,6 +38,8 @@ class ControllerFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the factory behaviour when given an array missin the 'class' key.
+     *
      * @expectedException \Spewia\Controller\Factory\Exception\ClassNotSpecifiedException
      */
     public function testBuildWithoutClass()
@@ -47,6 +48,8 @@ class ControllerFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests the factory behaviour when given a class which isn't a controller.
+     *
      * @expectedException \Spewia\Controller\Factory\Exception\InvalidClassException
      */
     public function testBuildInvalidClass()

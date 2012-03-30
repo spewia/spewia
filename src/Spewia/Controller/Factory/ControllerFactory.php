@@ -8,11 +8,7 @@ use Spewia\Controller\ControllerInterface;
 use Spewia\Controller\Factory\Exception\InvalidClassException;
 use Spewia\Controller\Factory\Exception\ClassNotSpecifiedException;
 /**
- * Created by JetBrains PhpStorm.
- * User: rllopart
- * Date: 30/03/12
- * Time: 11:12
- * To change this template use File | Settings | File Templates.
+ * Class used to create the controllers.
  */
 class ControllerFactory implements FactoryInterface
 {
@@ -23,6 +19,11 @@ class ControllerFactory implements FactoryInterface
      */
     protected $container;
 
+    /**
+     * Builds the ControllerFactory, with a container parameter wich will be injected in all the created controllers.
+     *
+     * @param \Spewia\DependencyInjection\ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
