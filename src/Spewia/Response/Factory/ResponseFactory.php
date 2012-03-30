@@ -16,7 +16,7 @@ class ResponseFactory implements FactoryInterface
      *
      * @param array $options Unused in this factory.
      *
-     * @return mixed
+     * @return \Spewia\Response\Response
      */
     public function build(array $options = array())
     {}
