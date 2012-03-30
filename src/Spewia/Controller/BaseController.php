@@ -22,10 +22,11 @@ class BaseController implements ControllerInterface
 
     public final function __construct(ContainerInterface $container)
     {
-
         $this->container = $container;
 
-        $this->response = new Response();
+        $this->response = $this->container->get('factory.response')->build();
+
+        $this->template = $this->container->get('template');
 
         $this->initialize();
     }
@@ -33,7 +34,7 @@ class BaseController implements ControllerInterface
     /**
      * Function to allow all the controllers to customize what to do when the __construct is finished.
      */
-    public function initialize()
+    protected function initialize()
     {
 
     }
@@ -41,9 +42,12 @@ class BaseController implements ControllerInterface
     /**
      * (non-PHPdoc)
      * @see Spewia\Controller.ControllerInterface::render()
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function render()
     {
-
+        $this->response->setContent($this->template->render());
+        return $this->response;
     }
 }
