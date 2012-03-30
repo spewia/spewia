@@ -19,5 +19,7 @@ class ResponseFactory implements FactoryInterface
      * @return \Spewia\Response\Response
      */
     public function build(array $options = array())
-    {}
+    {
+        return new Response();
+    }
 }
