@@ -13,5 +13,5 @@ interface FactoryInterface
      *
      * @return mixed
      */
-    public function build(array $options);
+    public function build(array $options = array());
 }
