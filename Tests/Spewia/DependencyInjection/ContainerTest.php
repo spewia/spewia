@@ -141,6 +141,17 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
+    public function testGetSelf()
+    {
+        $return = $this->object->get('container');
+
+        $this->assertInstanceOf('\Spewia\DependencyInjection\Container', $return,
+            'The return should be of class "Container".');
+
+        $this->assertSame($this->object, $return,
+            'The return of getting the "self" key should always be the container.');
+    }
+
     public function testGetWithNoDependencies()
     {
         $return = $this->object->get('foo');
@@ -236,6 +247,47 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame('FROM_FACTORY', $bar->getString(),
             'The bar object should contain the string wich is defined in the Factory constructor.');
+    }
+
+    public function testAddServiceConfigurations()
+    {
+        $this->object->addServiceConfigurations(array(
+            'added_foo' => array(
+                'class' => self::FOO_CLASS
+            )
+        ));
+
+        $foo = $this->object->get('added_foo');
+
+        $this->assertInstanceOf(self::FOO_CLASS, $foo,
+            'The new definition should be used and return an instance of the class "Foo".');
+    }
+
+    public function testAddServiceConfigurationsOverwrites()
+    {
+        $this->object->get('foo2');
+
+        $this->object->addServiceConfigurations(array(
+            'foo2' => array(
+                'class' => self::BAR_CLASS,
+                'constructor_parameters' => array(
+                    array(
+                        'type'  => 'service',
+                        'id'    => 'foo'
+                    ),
+                    array(
+                        'type'  => 'constant',
+                        'value' => 'string'
+                    )
+                )
+            )
+        ));
+
+        $bar = $this->object->get('foo2');
+
+        $this->assertInstanceOf(self::BAR_CLASS, $bar,
+            'The element whose configuration has changed should be of class "Bar". If there was an instance of the '
+            . 'previous configuration, it shouldn\'t have been used.');
     }
 }
 

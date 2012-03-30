@@ -19,12 +19,6 @@ interface TemplateInterface
     public function setTemplateFile($file);
 
     /**
-     * Sets the layout to use with this template.
-     * @param String $file
-     */
-    public function setLayoutFile($file);
-
-    /**
      * Returns the rendered template.
      *
      * @return String
