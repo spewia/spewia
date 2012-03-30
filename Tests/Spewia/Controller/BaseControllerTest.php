@@ -10,38 +10,69 @@ use Spewia\Controller\BaseController;
  */
 class BaseControllerTest extends \PHPUnit_Framework_TestCase
 {
-
-    /**
-     * Response property
-     * @var array
-     */
-    protected $response;
-
-    /**
-     * Template property
-     * @var array
-     */
     protected $template;
+    protected $container;
+    protected $response;
+    protected $controller;
+
+    public function setUp()
+    {
+        $this->template = \Mockery::mock('Spewia\Template\TemplateInterface');
+
+        $this->response = \Mockery::mock('Symfony\Component\HttpFoundation\Response');
+        $factory = \Mockery::mock('Spewia\Factory\FactoryInterface');
+
+        $this->container = \Mockery::mock('Spewia\DependencyInjection\ContainerInterface');
+
+        $this->container
+        ->shouldReceive('get')
+        ->with('factory.response')
+        ->andReturn($factory);
+
+        $factory
+        ->shouldReceive('build')
+        ->andReturn($this->response);
+
+        $this->container
+        ->shouldReceive('get')
+        ->with('template')
+        ->andReturn($this->template);
+
+        $this->controller = new TestControllerClass($this->container);
+
+    }
 
     /**
      * Test the Render in order to check that it generates the Reponse and the Template Correctly.
      */
     public function testRender()
     {
-        $controller = new TestControllerClass();
+        $this->template
+        ->shouldReceive('render')
+        ->once()
+        ->andReturn('<html></html>');
 
-        $controller->render();
-    }
+        $this->response
+        ->shouldReceive('setContent')
+        ->atLeast(1)
+        ->with('<html></html>');
 
-    /**
-     * Test the Render when there is no TemplateDefined because we only need the Response.
-     */
-    public function testRenderWithoutTemplate()
-    {
-        $controller = new TestControllerClass();
+        $this->controller->showAction();
+        $response = $this->controller->render();
 
-        $controller->render();
+        $this->assertSame($this->response, $response,
+            'The response is not the same as the returned by the controller.'
+        );
     }
 }
 
-class TestControllerClass extends BaseController {}
+/**
+ * Class to use in the tests.
+ */
+class TestControllerClass extends BaseController
+{
+    public function showAction()
+    {
+        ;
+    }
+}
