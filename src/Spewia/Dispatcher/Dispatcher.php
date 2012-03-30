@@ -15,9 +15,20 @@ class Dispatcher implements DispatcherInterface
      * @var Container
      */
     protected $container;
+
+    /**
+     * @var array
+     */
+    protected $project_configuration;
+
     function __construct()
     {
-        $this->container = $this->createDependencyInjectionContainer();
+        // Load the basic configuration.
+        $this->project_configuration = include __DIR__ . '/../config/project_configuration.php';
+        $dic_configuration = include __DIR__ . '/../config/dic_configuration.php';
+
+        // Create the container
+        $this->container = $this->createDependencyInjectionContainer($dic_configuration);
     }
 
     /**
@@ -25,7 +36,16 @@ class Dispatcher implements DispatcherInterface
      */
     public function run()
     {
-        // TODO: Implement run() method.
+        $router = $this->container->get('router');
+
+        $routing_info = $router->parseRequest($this->container->get('request'));
+
+        $controller = $this->container->get('factory.controller')->build(array(
+            'class' => $routing_info['controller']
+        ));
+
+        call_user_func_array(array($controller, $routing_info['action'] . 'Action'), $routing_info['params']);
+        $controller->render()->send();
     }
 
     /**
@@ -47,16 +67,26 @@ class Dispatcher implements DispatcherInterface
         }
 
         $this->container->addServiceConfigurations(include $dic_configuration_file);
+
+        $project_configuration_file = $configuration_dir . '/project_configuration.php';
+
+        if(file_exists($project_configuration_file)) {
+            $this->project_configuration = include $project_configuration_file + $this->project_configuration;
+        }
+
+        return $this;
     }
 
     /**
      * Creates the Dependency Injection Container and returns it.
      *
+     * @param array $configuration The base configuration.
+     *
      * @return \Spewia\DependencyInjection\Container
      */
-    protected function createDependencyInjectionContainer()
+    protected function createDependencyInjectionContainer(array $configuration)
     {
         // TODO: Load framework base configuration.
-        return new Container();
+        return new Container($configuration);
     }
 }
