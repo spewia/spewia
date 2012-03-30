@@ -2,6 +2,9 @@
 
 namespace Spewia\Controller;
 
+/**
+ * Controller Interface to be implemented by all the controllers.
+ */
 interface ControllerInterface
 {
     /**

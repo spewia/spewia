@@ -9,7 +9,6 @@ use Spewia\DependencyInjection\Exception\CircularDependencyException;
  * Container class to be able to use dependency injection.
  *
  * @author Roger Llopart Pla <lumbendil@gmail.com>
- * @todo: Update the documentation with information of the support of factory calls.
  */
 class Container implements ContainerInterface
 {
@@ -111,6 +110,10 @@ class Container implements ContainerInterface
      */
     public function get($identifier)
     {
+        if($identifier == 'container') {
+            return $this;
+        }
+
         if(!array_key_exists($identifier, $this->instances)) {
             if(!array_key_exists($identifier, $this->configuration)) {
                 throw new ServiceNotFoundException;

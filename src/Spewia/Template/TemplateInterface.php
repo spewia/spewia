@@ -2,6 +2,7 @@
 
 namespace Spewia\Template;
 
+
 interface TemplateInterface
 {
     /**
@@ -24,3 +25,4 @@ interface TemplateInterface
      */
     public function render();
 }
+
