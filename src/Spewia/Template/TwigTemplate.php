@@ -38,7 +38,7 @@ class TwigTemplate implements TemplateInterface
      */
     public function __construct($paths = array())
     {
-        $this->loader = new \Twig_Loader_Filesystem(array());
+        $this->loader = new \Twig_Loader_Filesystem($paths);
 
         $this->twig = new \Twig_Environment($this->loader);
     }
