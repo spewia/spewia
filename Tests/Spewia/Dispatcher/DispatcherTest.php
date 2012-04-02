@@ -142,7 +142,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $controller_factory = $basic_mocks['controller_factory'];
         $response = $basic_mocks['response'];
         $error_controller = \Mockery::mock('Spewia\Controller\ErrorController');
-        $controller_not_found_exception = \Mockery::mock(); // TODO: Add the exception
+        $controller_not_found_exception = new \Spewia\Controller\Factory\Exception\UnknownClassException();
 
         $router->shouldReceive('parseRequest')
             ->with($request)
@@ -166,8 +166,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         ))
             ->andReturn($error_controller);
 
-        $error_controller->shouldReceive('error5xxAction')
-            ->with($controller_not_found_exception);
+        $error_controller->shouldReceive('error5xxAction');
+          //  ->with($controller_not_found_exception);
 
         $error_controller->shouldReceive('render')
             ->andReturn($response);
@@ -213,6 +213,59 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
         $error_controller->shouldReceive('error5xxAction')
             ->with(\Mockery::type('\Spewia\Dispatcher\Exception\DispatcherException'));
+
+        $error_controller->shouldReceive('render')
+            ->andReturn($response);
+
+        $response->shouldReceive('send');
+
+        $this->object->configure($this->configuration_directory)->run();
+    }
+
+
+    public function testActionThrowsException()
+    {
+        $this->createRequiredConfigurationFiles();
+        $basic_mocks = $this->prepareBasicMocks();
+
+        $router = $basic_mocks['router'];
+        $request = $basic_mocks['request'];
+        $controller_factory = $basic_mocks['controller_factory'];
+        $response = $basic_mocks['response'];
+
+        $controller = \Mockery::mock('Spewia\Controller\ControllerInterface');
+        $error_controller = \Mockery::mock('Spewia\Controller\ErrorController');
+        $exception = new \Exception();
+
+        $router->shouldReceive('parseRequest')
+            ->with($request)
+            ->andReturn(
+            array(
+                'controller' => '\DummyController',
+                'action'     => 'show',
+                'params'     => array()
+            )
+        );
+
+        $controller_factory->shouldReceive('build')
+            ->with(array(
+            'class' => '\DummyController'
+        ))
+            ->andReturn($controller);
+
+        $controller->shouldReceive('showAction')
+            ->once()
+            ->withNoArgs()
+            ->andThrow($exception);
+
+        $controller_factory->shouldReceive('build')
+            ->with(array(
+            'class' => '\Spewia\Controller\ErrorController'
+        ))
+            ->andReturn($error_controller);
+
+        $error_controller->shouldReceive('error5xxAction')
+            ->with($exception);
 
         $error_controller->shouldReceive('render')
             ->andReturn($response);
