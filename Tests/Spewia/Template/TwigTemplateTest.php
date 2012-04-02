@@ -59,4 +59,38 @@ EOF;
 
         $this->assertEquals('dummy', $result);
     }
+
+    public function testAddSinglePathViaConstructor()
+    {
+        $path   = vfsStream::url('root');
+        $object = new TwigTemplate($path);
+
+        $file_content = <<<EOF
+dummy
+EOF;
+
+        $this->file->setContent($file_content);
+
+        $object->setTemplateFile('dummy.tpl');
+        $result = $object->render();
+
+        $this->assertEquals('dummy', $result);
+    }
+
+    public function testAddMultiplePathsViaConstructor()
+    {
+        $paths  = array(vfsStream::url('root'));
+        $object = new TwigTemplate($paths);
+
+        $file_content = <<<EOF
+dummy
+EOF;
+
+        $this->file->setContent($file_content);
+
+        $object->setTemplateFile('dummy.tpl');
+        $result = $object->render();
+
+        $this->assertEquals('dummy', $result);
+    }
 }
