@@ -4,6 +4,8 @@ namespace Spewia\Dispatcher;
 
 use Spewia\DependencyInjection\Container;
 use Spewia\Dispatcher\Exception\FileNotFoundException;
+use Spewia\Router\Exception\RouteNotFoundException;
+use Spewia\Dispatcher\Exception\DispatcherException;
 /**
  * Implementation of the dispatcher interface, wich handles a request received by the webserver.
  *
@@ -37,15 +39,40 @@ class Dispatcher implements DispatcherInterface
     public function run()
     {
         $router = $this->container->get('router');
+        $controller_factory = $this->container->get('factory.controller');
+
+        try {
 
         $routing_info = $router->parseRequest($this->container->get('request'));
 
-        $controller = $this->container->get('factory.controller')->build(array(
+        $controller = $controller_factory->build(array(
             'class' => $routing_info['controller']
         ));
 
-        call_user_func_array(array($controller, $routing_info['action'] . 'Action'), $routing_info['params']);
+        $action_to_call = array($controller, $routing_info['action'] . 'Action');
+
+        if(!is_callable($action_to_call)) {
+            throw new DispatcherException("The given action ({$routing_info['controller']}::{$action_to_call[1]})"
+                . "  can\'t be called.");
+        }
+
+        call_user_func_array($action_to_call, $routing_info['params']);
         $controller->render()->send();
+        } catch (RouteNotFoundException $e ) {
+            $controller = $controller_factory->build(array(
+                'class' => $this->project_configuration['error_controller']
+            ));
+
+            $controller->error404Action($e);
+            $controller->render()->send();
+        } catch (\Exception $e ) {
+            $controller = $controller_factory->build(array(
+                'class' => $this->project_configuration['error_controller']
+            ));
+
+            $controller->error5xxAction($e);
+            $controller->render()->send();
+        }
     }
 
     /**
