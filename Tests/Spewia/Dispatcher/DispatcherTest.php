@@ -4,12 +4,11 @@ namespace Tests\Spewia\Dispatcher;
 
 use Spewia\Dispatcher\Dispatcher as BaseDispatcher;
 use org\bovigo\vfs\vfsStream;
+
 /**
- * Created by JetBrains PhpStorm.
- * User: Lumbendil
- * Date: 29/03/12
- * Time: 10:50
- * To change this template use File | Settings | File Templates.
+ * Tests for the Dispatcher class.
+ *
+ * @author Roger Llopart Pla <lumbendil@gmail.com>
  */
 class DispatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,6 +33,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->configuration_directory = vfsStream::url('root');
     }
 
+    /**
+     * Verifies that the configure call adds the serviceConfigurations to the dispatcher.
+     */
     public function testConfigure()
     {
         $this->createRequiredConfigurationFiles();
@@ -49,6 +51,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Verifies that an exception is thrown when there is a configuration file missing.
+     *
      * @expectedException \Spewia\Dispatcher\Exception\FileNotFoundException
      */
     public function testConfigureMissingFile()
@@ -56,6 +60,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object->configure($this->configuration_directory);
     }
 
+    /**
+     * Verifies the default behaviour of the run() method.
+     */
     public function testRun()
     {
         $this->createRequiredConfigurationFiles();
@@ -73,15 +80,15 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->andReturn(
             array(
                 'controller' => '\DummyController',
-                'action'     => 'show',
-                'params'     => array()
+                'action' => 'show',
+                'params' => array()
             )
         );
 
         $controller_factory->shouldReceive('build')
             ->with(array(
             'class' => '\DummyController'
-            ))
+        ))
             ->andReturn($controller);
 
         $controller->shouldReceive('showAction')
@@ -98,6 +105,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object->configure($this->configuration_directory)->run();
     }
 
+    /**
+     * Verifies that when the route can't be matched, a 404 page is shown.
+     */
     public function testRunRouteNotFound()
     {
         $this->createRequiredConfigurationFiles();
@@ -117,8 +127,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
 
         $controller_factory->shouldReceive('build')
             ->with(array(
-                'class' => '\Spewia\Controller\ErrorController'
-            ))
+            'class' => '\Spewia\Controller\ErrorController'
+        ))
             ->andReturn($error_controller);
 
         $error_controller->shouldReceive('error404Action')
@@ -132,6 +142,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object->configure($this->configuration_directory)->run();
     }
 
+    /**
+     * Verifies that when the given controller can't be found, a 5xx error is thrown.
+     */
     public function testRunControllerNotFound()
     {
         $this->createRequiredConfigurationFiles();
@@ -149,8 +162,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->andReturn(
             array(
                 'controller' => '\DummyController',
-                'action'     => 'show',
-                'params'     => array()
+                'action' => 'show',
+                'params' => array()
             )
         );
 
@@ -167,7 +180,7 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->andReturn($error_controller);
 
         $error_controller->shouldReceive('error5xxAction');
-          //  ->with($controller_not_found_exception);
+        //  ->with($controller_not_found_exception);
 
         $error_controller->shouldReceive('render')
             ->andReturn($response);
@@ -177,6 +190,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $this->object->configure($this->configuration_directory)->run();
     }
 
+    /**
+     * Verifies that when the action can't be called, a 5xx error is thrown.
+     */
     public function testActionDoesntExist()
     {
         $this->createRequiredConfigurationFiles();
@@ -194,8 +210,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->andReturn(
             array(
                 'controller' => '\Tests\Spewia\Dispatcher\FakeController',
-                'action'     => 'show',
-                'params'     => array()
+                'action' => 'show',
+                'params' => array()
             )
         );
 
@@ -220,9 +236,14 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
         $response->shouldReceive('send');
 
         $this->object->configure($this->configuration_directory)->run();
+
+        $this->assertFalse($controller->wasRenderCalled(),
+            'The render method shouldn\'t have been called.');
     }
 
-
+    /**
+     * Verifies that when there is an exception thrown by the controller, a 5xx error is thrown.
+     */
     public function testActionThrowsException()
     {
         $this->createRequiredConfigurationFiles();
@@ -242,8 +263,8 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->andReturn(
             array(
                 'controller' => '\DummyController',
-                'action'     => 'show',
-                'params'     => array()
+                'action' => 'show',
+                'params' => array()
             )
         );
 
@@ -257,6 +278,9 @@ class DispatcherTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->withNoArgs()
             ->andThrow($exception);
+
+        $controller->shouldReceive('render')
+            ->never();
 
         $controller_factory->shouldReceive('build')
             ->with(array(
@@ -309,6 +333,18 @@ DIC_CONFIGURATION;
         $dic_configuration_file->setContent($dic_configuration);
     }
 
+    /**
+     * Builds the mocks which are always needed for the run method:
+     *
+     * * router
+     * * request
+     * * controller_factory
+     * * response
+     *
+     * And adds all of them but the response to the dependency injection container.
+     *
+     * @return array
+     */
     protected function prepareBasicMocks()
     {
         $router = \Mockery::mock('Spewia\Router\RouterInterface');
@@ -332,8 +368,18 @@ DIC_CONFIGURATION;
     }
 }
 
+/**
+ * Dummy dispatcher which mocks the dependency injection container.
+ */
 class Dispatcher extends BaseDispatcher
 {
+    /**
+     * Method which returns a mock of the container and adds a global "$mock".
+     *
+     * @global $mock
+     * @param array $configuration
+     * @return \Mockery\MockInterface|\Spewia\DependencyInjection\Container
+     */
     protected function createDependencyInjectionContainer(array $configuration = array())
     {
         global $mock;
@@ -342,6 +388,9 @@ class Dispatcher extends BaseDispatcher
     }
 }
 
+/**
+ * Fake controller which shouldn't have it's render method called.
+ */
 class FakeController implements \Spewia\Controller\ControllerInterface
 {
     protected $render_called = false;
@@ -351,6 +400,11 @@ class FakeController implements \Spewia\Controller\ControllerInterface
         $this->render_called = true;
     }
 
+    /**
+     * Returns if the render method of the controller was called.
+     *
+     * @return bool
+     */
     public function wasRenderCalled()
     {
         return $this->render_called;

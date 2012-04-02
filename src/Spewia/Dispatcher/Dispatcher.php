@@ -6,6 +6,7 @@ use Spewia\DependencyInjection\Container;
 use Spewia\Dispatcher\Exception\FileNotFoundException;
 use Spewia\Router\Exception\RouteNotFoundException;
 use Spewia\Dispatcher\Exception\DispatcherException;
+use Spewia\Factory\FactoryInterface;
 /**
  * Implementation of the dispatcher interface, wich handles a request received by the webserver.
  *
@@ -14,15 +15,23 @@ use Spewia\Dispatcher\Exception\DispatcherException;
 class Dispatcher implements DispatcherInterface
 {
     /**
+     * The container which will be used by the application.
+     *
      * @var Container
      */
     protected $container;
 
     /**
+     * The project configuration array. It currently supports only one key, 'error_controller', which is the class which
+     * is the controller that will be called if there is an error in the application.
+     *
      * @var array
      */
     protected $project_configuration;
 
+    /**
+     * Builds the dispatcher, reading the files from the framework configuration directory.
+     */
     function __construct()
     {
         // Load the basic configuration.
@@ -34,7 +43,7 @@ class Dispatcher implements DispatcherInterface
     }
 
     /**
-     * Run the Dispatcher for the recieved Request to the webserver.
+     * Run the Dispatcher for the received Request to the webserver.
      */
     public function run()
     {
@@ -43,40 +52,31 @@ class Dispatcher implements DispatcherInterface
 
         try {
 
-        $routing_info = $router->parseRequest($this->container->get('request'));
+            $routing_info = $router->parseRequest($this->container->get('request'));
 
-        $controller = $controller_factory->build(array(
-            'class' => $routing_info['controller']
-        ));
+            $controller = $controller_factory->build(array(
+                'class' => $routing_info['controller']
+            ));
 
-        $action_to_call = array($controller, $routing_info['action'] . 'Action');
+            $action_to_call = array($controller, $routing_info['action'] . 'Action');
 
-        if(!is_callable($action_to_call)) {
-            throw new DispatcherException("The given action ({$routing_info['controller']}::{$action_to_call[1]})"
-                . "  can\'t be called.");
-        }
+            if(!is_callable($action_to_call)) {
+                throw new DispatcherException("The given action ({$routing_info['controller']}::{$action_to_call[1]})"
+                    . "  can't be called.");
+            }
 
-        call_user_func_array($action_to_call, $routing_info['params']);
-        $controller->render()->send();
+            call_user_func_array($action_to_call, $routing_info['params']);
+            $controller->render()->send();
+
         } catch (RouteNotFoundException $e ) {
-            $controller = $controller_factory->build(array(
-                'class' => $this->project_configuration['error_controller']
-            ));
-
-            $controller->error404Action($e);
-            $controller->render()->send();
+            $this->handleError($controller_factory, $e, 'error404Action');
         } catch (\Exception $e ) {
-            $controller = $controller_factory->build(array(
-                'class' => $this->project_configuration['error_controller']
-            ));
-
-            $controller->error5xxAction($e);
-            $controller->render()->send();
+            $this->handleError($controller_factory, $e, 'error5xxAction');
         }
     }
 
     /**
-     * Configurates all the systems SetUp by the Dispatcher with the files in the $configuration_dir directory.
+     * Configures all the systems SetUp by the Dispatcher with the files in the $configuration_dir directory.
      *
      * @param string $configuration_dir
      *
@@ -105,6 +105,23 @@ class Dispatcher implements DispatcherInterface
     }
 
     /**
+     * Handles an error, by calling the given action from the 'error_controller'.
+     *
+     * @param \Spewia\Factory\FactoryInterface $controller_factory
+     * @param \Exception $exception
+     * @param $action
+     */
+    protected function handleError(FactoryInterface $controller_factory, \Exception $exception, $action)
+    {
+        $controller = $controller_factory->build(array(
+            'class' => $this->project_configuration['error_controller']
+        ));
+
+        $controller->$action($exception);
+        $controller->render()->send();
+    }
+
+    /**
      * Creates the Dependency Injection Container and returns it.
      *
      * @param array $configuration The base configuration.
@@ -113,7 +130,6 @@ class Dispatcher implements DispatcherInterface
      */
     protected function createDependencyInjectionContainer(array $configuration)
     {
-        // TODO: Load framework base configuration.
         return new Container($configuration);
     }
 }
