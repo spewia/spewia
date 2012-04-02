@@ -31,9 +31,14 @@ class TwigTemplate implements TemplateInterface
      */
     protected $parameters = array();
 
-    public function __construct()
+    /**
+     * Builds the TwigTemplate object.
+     *
+     * @param array|string $paths path or paths to give to the template file loader.
+     */
+    public function __construct($paths = array())
     {
-        $this->loader = new \Twig_Loader_Filesystem(array());
+        $this->loader = new \Twig_Loader_Filesystem($paths);
 
         $this->twig = new \Twig_Environment($this->loader);
     }
