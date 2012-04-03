@@ -62,13 +62,13 @@ class RouterSpewiaI18n extends RouterSpewia implements RouterInterface
     public function parseRequest(Request $request)
     {
         //check if any of the entries in the patterns is the same that the uri passed in the Request
-        $identifier = $this->getIdentifierByUri($request->getUri(), $request->getLocale());
+        $identifier = $this->getIdentifierByUri($request->getPathInfo(), $request->getLocale());
 
         if ($identifier === NULL) {
           throw new RouteNotFoundException();
         }
 
-        $params = $this->getParamsFromRequestUri($identifier, $request->getUri(), $request->getLocale());
+        $params = $this->getParamsFromRequestUri($identifier, $request->getPathInfo(), $request->getLocale());
 
         $this->routing_configuration[$identifier]['params'] = $params;
 
