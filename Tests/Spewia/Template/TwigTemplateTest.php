@@ -5,9 +5,6 @@ namespace Tests\Spewia\Template;
 use Spewia\Template\TwigTemplate;
 use org\bovigo\vfs\vfsStream;
 
-/**
- * @runTestsInSeparateProcesses
- */
 class TwigTemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
