@@ -14,16 +14,16 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     {
         //Create the routing configuration array
         $routing_configuration = array(
-                    'test' => array(
-                        'pattern'				=> '/test/test',
-                        'controller'    => 'test',
-                        'action'				=> 'test',
-                    ),
-        						'test_page' => array(
-                        'pattern'				=> '/test/test/{page}',
-                        'controller'    => 'test',
-                        'action'				=> 'test',
-                    ),
+            'test'      => array(
+                'pattern'                => '/test/test',
+                'controller'             => 'test',
+                'action'                 => 'test',
+            ),
+            'test_page' => array(
+                'pattern'                => '/test/test/{page}',
+                'controller'             => 'test',
+                'action'                 => 'test',
+            ),
         );
 
         $this->router = new Router($routing_configuration);
@@ -37,29 +37,29 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         //Create the request
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
-        ->shouldReceive('getUri')
-        ->once()
-        ->andReturn('/test/test');
+            ->shouldReceive('getPathInfo')
+            ->once()
+            ->andReturn('/test/test');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                    'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertEquals(
-                    'test',$routerParams['controller'],
-                		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
         $this->assertEquals(
-                    'test',$routerParams['action'],
-                		'The "action" returned is not the desired one.'
+            'test', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            'test', $routerParams['action'],
+            'The "action" returned is not the desired one.'
         );
 
     }
@@ -74,9 +74,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         //Create the request
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
-        ->shouldReceive('getUri')
-        ->once()
-        ->andReturn('/test2/test2');
+            ->shouldReceive('getPathInfo')
+            ->once()
+            ->andReturn('/test2/test2');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -90,29 +90,29 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         //Create the request
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
         $request
-        ->shouldReceive('getUri')
-        ->once()
-        ->andReturn('/test/test/2');
+            ->shouldReceive('getPathInfo')
+            ->once()
+            ->andReturn('/test/test/2');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                            'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-        										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertEquals(
-                            'test',$routerParams['controller'],
-                        		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
         $this->assertEquals(
-                            'test',$routerParams['action'],
-                        		'The "action" returned is not the desired one.'
+            'test', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            'test', $routerParams['action'],
+            'The "action" returned is not the desired one.'
         );
     }
 
@@ -127,7 +127,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotNull(
             $uri,
-        		'There is not route for this identifier.'
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
@@ -142,13 +142,13 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testBuildUriWithParameters()
     {
         $identifier = 'test_page';
-        $params = array('page' => 2);
+        $params     = array('page' => 2);
 
         $uri = $this->router->buildUri($identifier, $params);
 
         $this->assertNotNull(
             $uri,
-    				'There is not route for this identifier.'
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
@@ -168,7 +168,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull(
             $uri,
-						'There is a route for an identifier that is not defined.'
+            'There is a route for an identifier that is not defined.'
         );
 
     }
