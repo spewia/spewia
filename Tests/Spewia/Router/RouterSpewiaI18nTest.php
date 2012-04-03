@@ -14,37 +14,37 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     {
         //Create the routing configuration array
         $routing_configuration = array(
-                    'page' => array(
-                        'pattern'				=> array(
-                            'en_US'     => '/page',
-                            'es_ES'			=> '/pagina',
-                        ),
-        								'controller'    => 'page',
-                        'action'				=> 'default',
-                    ),
-                    'home' => array(
-                        'pattern'			 => array(
-                            'en_US'    => '/home',
-                        ),
-        								'controller'    => 'page',
-                        'action'				=> 'home',
-                    ),
-                    'list' => array(
-        								'pattern'				=> array(
-                            'en_US'     => '/list{_<page:\d+>}',
-                            'es_ES'			=> '/listado{_<page:\d+>}',
-                        ),
-                        'controller'    => 'list',
-                        'action'				=> 'default',
-                        'defaults'			=> array(
-                            'page' => 1,
-                        )
-                    ),
-                    'about' => array(
-        								'pattern'				=> '/about',
-        								'controller'    => 'page',
-                        'action'				=> 'about',
-                    ),
+            'page'  => array(
+                'pattern'                => array(
+                    'en_US'            => '/page',
+                    'es_ES'            => '/pagina',
+                ),
+                'controller'             => 'page',
+                'action'                 => 'default',
+            ),
+            'home'  => array(
+                'pattern'               => array(
+                    'en_US'    => '/home',
+                ),
+                'controller'            => 'page',
+                'action'                => 'home',
+            ),
+            'list'  => array(
+                'pattern'                => array(
+                    'en_US'            => '/list{_<page:\d+>}',
+                    'es_ES'            => '/listado{_<page:\d+>}',
+                ),
+                'controller'             => 'list',
+                'action'                 => 'default',
+                'defaults'               => array(
+                    'page' => 1,
+                )
+            ),
+            'about' => array(
+                'pattern'                => '/about',
+                'controller'             => 'page',
+                'action'                 => 'about',
+            ),
         );
 
         $this->router = new RouterSpewiaI18n($routing_configuration, 'en_US');
@@ -61,32 +61,32 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/pagina');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/pagina');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                            'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-        										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertEquals(
-                            'page',$routerParams['controller'],
-                        		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
         $this->assertEquals(
-                            'default',$routerParams['action'],
-                        		'The "action" returned is not the desired one.'
+            'page', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            'default', $routerParams['action'],
+            'The "action" returned is not the desired one.'
         );
     }
 
@@ -100,32 +100,32 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/page');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/page');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('NULL');
+            ->shouldReceive('getLocale')
+            ->andReturn('NULL');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                                    'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-                										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertEquals(
-                                    'page',$routerParams['controller'],
-                                		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
         $this->assertEquals(
-                                    'default',$routerParams['action'],
-                                		'The "action" returned is not the desired one.'
+            'page', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            'default', $routerParams['action'],
+            'The "action" returned is not the desired one.'
         );
     }
 
@@ -140,12 +140,12 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/page');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/page');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
     }
@@ -159,52 +159,52 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/about');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/about');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                                    'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-                										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertEquals(
-                                    'page',$routerParams['controller'],
-                                		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
         $this->assertEquals(
-                                    'about',$routerParams['action'],
-                                		'The "action" returned is not the desired one.'
+            'page', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            'about', $routerParams['action'],
+            'The "action" returned is not the desired one.'
         );
     }
 
     /**
-    * Test the router when the identifier passed is not defined in the router.
-    *
-    * @expectedException Spewia\Router\Exception\RouteNotFoundException
-    */
+     * Test the router when the identifier passed is not defined in the router.
+     *
+     * @expectedException Spewia\Router\Exception\RouteNotFoundException
+     */
     public function testRouteNotFound()
     {
         //Create the request
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/pagina2');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/pagina2');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
@@ -219,96 +219,96 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/listado_2');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/listado_2');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                                    'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-                										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertArrayHasKey('params',$routerParams,
-                										'There is no "params" defined in the $routerParams array.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
-        $this->assertArrayHasKey('page',$routerParams['params'],
-                										'There is no "page" defined in the $routerParams["params"] array.'
+        $this->assertArrayHasKey('params', $routerParams,
+            'There is no "params" defined in the $routerParams array.'
         );
 
-        $this->assertEquals(
-                                    'list',$routerParams['controller'],
-                                		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('page', $routerParams['params'],
+            'There is no "page" defined in the $routerParams["params"] array.'
         );
 
         $this->assertEquals(
-                                    'default',$routerParams['action'],
-                                		'The "action" returned is not the desired one.'
+            'list', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
         );
 
         $this->assertEquals(
-                                    '2',$routerParams['params']['page'],
-                                		'The "page" returned is not the desired one.'
+            'default', $routerParams['action'],
+            'The "action" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            '2', $routerParams['params']['page'],
+            'The "page" returned is not the desired one.'
         );
     }
 
     /**
-    * Test the router with parameters, that have been set as defaults.
-    */
+     * Test the router with parameters, that have been set as defaults.
+     */
     public function testControllerActionRoutingI18nWithDefaultParams()
     {
         //Create the request
         $request = \Mockery::mock('Symfony\Component\HttpFoundation\Request');
 
         $request
-        ->shouldReceive('getUri')
-        ->andReturn('/listado');
+            ->shouldReceive('getPathInfo')
+            ->andReturn('/listado');
 
         $request
-        ->shouldReceive('getLocale')
-        ->andReturn('es_ES');
+            ->shouldReceive('getLocale')
+            ->andReturn('es_ES');
 
         $routerParams = $this->router->parseRequest($request);
 
         $this->assertTrue(is_array($routerParams), 'The routerParams is not an array');
 
-        $this->assertArrayHasKey('controller',$routerParams,
-                                    'There is no "controller" defined in the $routerParams array.'
+        $this->assertArrayHasKey('controller', $routerParams,
+            'There is no "controller" defined in the $routerParams array.'
         );
-        $this->assertArrayHasKey('action',$routerParams,
-                										'There is no "action" defined in the $routerParams array.'
-        );
-
-        $this->assertArrayHasKey('params',$routerParams,
-                        										'There is no "params" defined in the $routerParams array.'
+        $this->assertArrayHasKey('action', $routerParams,
+            'There is no "action" defined in the $routerParams array.'
         );
 
-        $this->assertArrayHasKey('page',$routerParams['params'],
-                        										'There is no "page" defined in the $routerParams["params"] array.'
+        $this->assertArrayHasKey('params', $routerParams,
+            'There is no "params" defined in the $routerParams array.'
         );
 
-        $this->assertEquals(
-                                    'list',$routerParams['controller'],
-                                		'The "controller" returned is not the desired one.'
+        $this->assertArrayHasKey('page', $routerParams['params'],
+            'There is no "page" defined in the $routerParams["params"] array.'
         );
 
         $this->assertEquals(
-                                    'default',$routerParams['action'],
-                                		'The "action" returned is not the desired one.'
+            'list', $routerParams['controller'],
+            'The "controller" returned is not the desired one.'
         );
 
         $this->assertEquals(
-                                    '1',$routerParams['params']['page'],
-                                		'The "page" returned is not the desired one.'
+            'default', $routerParams['action'],
+            'The "action" returned is not the desired one.'
+        );
+
+        $this->assertEquals(
+            '1', $routerParams['params']['page'],
+            'The "page" returned is not the desired one.'
         );
     }
 
@@ -318,18 +318,18 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     public function testBuildUriWithNoParameters()
     {
         $identifier = 'page';
-        $language = 'es_ES';
+        $language   = 'es_ES';
 
         $uri = $this->router->buildUri($identifier, array(), $language);
 
         $this->assertNotNull(
-        $uri,
-                		'There is not route for this identifier.'
+            $uri,
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
-                    '/pagina', $uri,
-                    'The uri returned is not the expected one.'
+            '/pagina', $uri,
+            'The uri returned is not the expected one.'
         );
     }
 
@@ -339,19 +339,19 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     public function testBuildUriWithParameters()
     {
         $identifier = 'list';
-        $params = array('page' => 2);
-        $language = 'es_ES';
+        $params     = array('page' => 2);
+        $language   = 'es_ES';
 
         $uri = $this->router->buildUri($identifier, $params, $language);
 
         $this->assertNotNull(
-        $uri,
-                		'There is not route for this identifier.'
+            $uri,
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
-                    '/listado_2', $uri,
-                    'The uri returned is not the expected one.'
+            '/listado_2', $uri,
+            'The uri returned is not the expected one.'
         );
     }
 
@@ -365,8 +365,8 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $uri = $this->router->buildUri($identifier);
 
         $this->assertNull(
-        $uri,
-        						'There is a route for an identifier that is not defined.'
+            $uri,
+            'There is a route for an identifier that is not defined.'
         );
     }
 
@@ -376,18 +376,18 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
     public function testBuildUriWithSpecificLanguage()
     {
         $identifier = 'page';
-        $language = 'en_US';
+        $language   = 'en_US';
 
         $uri = $this->router->buildUri($identifier, array(), $language);
 
         $this->assertNotNull(
-        $uri,
-                		'There is not route for this identifier.'
+            $uri,
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
-                    '/page', $uri,
-                    'The uri returned is not the expected one.'
+            '/page', $uri,
+            'The uri returned is not the expected one.'
         );
     }
 
@@ -401,13 +401,13 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $uri = $this->router->buildUri($identifier);
 
         $this->assertNotNull(
-        $uri,
-                        		'There is not route for this identifier.'
+            $uri,
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
-                            '/home', $uri,
-                            'The uri returned is not the expected one.'
+            '/home', $uri,
+            'The uri returned is not the expected one.'
         );
     }
 
@@ -421,13 +421,13 @@ class RouterSpewiaI18nTest extends \PHPUnit_Framework_TestCase
         $uri = $this->router->buildUri($identifier);
 
         $this->assertNotNull(
-        $uri,
-                        		'There is not route for this identifier.'
+            $uri,
+            'There is not route for this identifier.'
         );
 
         $this->assertEquals(
-                            '/about', $uri,
-                            'The uri returned is not the expected one.'
+            '/about', $uri,
+            'The uri returned is not the expected one.'
         );
     }
 

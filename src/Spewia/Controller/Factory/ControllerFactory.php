@@ -7,6 +7,7 @@ use Spewia\DependencyInjection\ContainerInterface;
 use Spewia\Controller\ControllerInterface;
 use Spewia\Controller\Factory\Exception\InvalidClassException;
 use Spewia\Controller\Factory\Exception\ClassNotSpecifiedException;
+use Spewia\Controller\Factory\Exception\UnknownClassException;
 /**
  * Class used to create the controllers.
  */
@@ -39,6 +40,7 @@ class ControllerFactory implements FactoryInterface
      *
      * @throws ClassNotSpecifiedException Thrown when the class key of the array hasn't been defined.
      * @throws InvalidClassException      Thrown when the instantiated class doesn't implement the expected interface.
+     * @throws UnknownClassException      Thrown when the given class doesn't exist.
      */
     public function build(array $options = array())
     {
@@ -47,6 +49,10 @@ class ControllerFactory implements FactoryInterface
         }
 
         $controller_class = $options['class'];
+
+        if(!class_exists($controller_class)) {
+            throw new UnknownClassException;
+        }
 
         $controller = new $controller_class($this->container);
 

@@ -5,9 +5,6 @@ namespace Tests\Spewia\Template;
 use Spewia\Template\TwigTemplate;
 use org\bovigo\vfs\vfsStream;
 
-/**
- * @runTestsInSeparateProcesses
- */
 class TwigTemplateTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -56,6 +53,40 @@ EOF;
         $this->object->assign('var', 'mmy');
 
         $result = $this->object->render();
+
+        $this->assertEquals('dummy', $result);
+    }
+
+    public function testAddSinglePathViaConstructor()
+    {
+        $path   = vfsStream::url('root');
+        $object = new TwigTemplate($path);
+
+        $file_content = <<<EOF
+dummy
+EOF;
+
+        $this->file->setContent($file_content);
+
+        $object->setTemplateFile('dummy.tpl');
+        $result = $object->render();
+
+        $this->assertEquals('dummy', $result);
+    }
+
+    public function testAddMultiplePathsViaConstructor()
+    {
+        $paths  = array(vfsStream::url('root'));
+        $object = new TwigTemplate($paths);
+
+        $file_content = <<<EOF
+dummy
+EOF;
+
+        $this->file->setContent($file_content);
+
+        $object->setTemplateFile('dummy.tpl');
+        $result = $object->render();
 
         $this->assertEquals('dummy', $result);
     }

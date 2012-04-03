@@ -58,6 +58,18 @@ class ControllerFactoryTest extends \PHPUnit_Framework_TestCase
             'class' => '\stdClass'
         ));
     }
+
+    /**
+     * Tests the factory behaviour when given a class wich doesn't exist.
+     *
+     * @expectedException \Spewia\Controller\Factory\Exception\UnknownClassException
+     */
+    public function testBuildUnexistingClass()
+    {
+        $object = $this->object->build(array(
+            'class' => '\Some\Unknown\Class'
+        ));
+    }
 }
 
 class DummyController implements \Spewia\Controller\ControllerInterface
