@@ -20,7 +20,12 @@ class BaseController implements ControllerInterface
      */
     protected $template;
 
-    public final function __construct(ContainerInterface $container)
+    /**
+     * Constructor. Most of the time instead of overriding it, it should be extended using initialize.
+     *
+     * @param \Spewia\DependencyInjection\ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
 
